@@ -2,6 +2,37 @@ const express = require('express');
 const router = express.Router();
 const db = require('../database');
 
+const Ajv = require('ajv');
+const ajv = new Ajv();
+
+const createQuestionSchema = {
+  type: 'object',
+  properties: {
+    text: { type: 'string' },
+    answer_option_a: { type: 'string' },
+    answer_option_b: { type: 'string' },
+    answer_option_c: { type: 'string' },
+    it_role_id: { type: 'integer' }
+  },
+  required: ['text', 'answer_option_a', 'answer_option_b', 'answer_option_c', 'it_role_id'],
+  additionalProperties: false
+};
+
+const updateQuestionSchema = {
+  type: 'object',
+  properties: {
+    text: { type: 'string' },
+    answer_option_a: { type: 'string' },
+    answer_option_b: { type: 'string' },
+    answer_option_c: { type: 'string' },
+    answer_option_c: { type: 'string' },
+    is_active: { type: 'integer' },
+    it_role_id: { type: 'integer' }
+  },
+  required: ['text', 'answer_option_a', 'answer_option_b', 'answer_option_c', 'it_role_id'],
+  additionalProperties: false
+};
+
 router.get('/', (req, res) => {
   const questions = db.prepare('SELECT * FROM question').all();
   res.json(questions);
@@ -26,6 +57,15 @@ router.get('/test', (req, res) => {
 });
 
 router.post('/', (req, res) => {
+  const valid = ajv.validate(createQuestionSchema, req.body);
+  if (!valid) {
+    return res.status(400).json({
+      error: 'invalidDtoIn',
+      message: 'DtoIn is not valid.',
+      invalidTypeKeyMap: ajv.errors
+    });
+  }
+
   const { text, answer_option_a, answer_option_b, answer_option_c, it_role_id } = req.body;
   const result = db.prepare(`
     INSERT INTO question (text, answer_option_a, answer_option_b, answer_option_c, it_role_id)
@@ -43,9 +83,18 @@ router.get('/:id', (req, res) => {
 
 // update question
 router.put('/:id', (req, res) => {
+  const valid = ajv.validate(updateQuestionSchema, req.body);
+  if (!valid) {
+    return res.status(400).json({
+      error: 'invalidDtoIn',
+      message: 'DtoIn is not valid.',
+      invalidTypeKeyMap: ajv.errors
+    });
+  }
+
   const { text, answer_option_a, answer_option_b, answer_option_c, is_active, it_role_id } = req.body;
   const question = db.prepare('SELECT * FROM question WHERE id = ?').get(req.params.id);
-  if (!question) return res.status(404).json({ error: 'Question not found' });
+  if (!question) return res.status(404).json({ error: 'questionNotFound', message: 'Question with given id does not exist' });
   db.prepare('UPDATE question SET text = ?, answer_option_a = ?, answer_option_b = ?, answer_option_c = ?, is_active = ?, it_role_id = ? WHERE id = ?')
     .run(text, answer_option_a, answer_option_b, answer_option_c, is_active, it_role_id, req.params.id);
   res.json({ id: req.params.id, text, answer_option_a, answer_option_b, answer_option_c, is_active, it_role_id });
