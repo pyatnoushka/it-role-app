@@ -79,10 +79,11 @@ function getTestQuestions() {
       const shuffled = questions.sort(() => Math.random() - 0.5);
       testQuestions = testQuestions.concat(shuffled.slice(0, 4));
     });
-    return testQuestions.sort(() => Math.random() - 0.5);
+    return testQuestions.sort(() => Math.random() - 0.5).slice(0, 20);
   } catch (error) {
     throw { code: "failedToGetTestQuestions", message: error.message };
   }
 }
 
 module.exports = { get, create, update, remove, list, getTestQuestions };
+
