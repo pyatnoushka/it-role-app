@@ -28,8 +28,7 @@ export default function TestPage() {
       });
   }, []);
 
-  function handleAnswer(answer) {
-    if (selected) return;
+ function handleAnswer(answer) {
     setSelected(answer);
     const newScores = { ...scores };
     newScores[answer.itRoleId] = (newScores[answer.itRoleId] || 0) + 1;
@@ -97,7 +96,7 @@ export default function TestPage() {
               key={i}
               className={`answer-btn ${selected === answer ? "answer-chosen" : ""}`}
               onClick={() => handleAnswer(answer)}
-              disabled={selected !== null}
+              disabled={false}
             >
               <span className="ans-badge">{String.fromCharCode(65 + i)}</span>
               <span className="ans-text">{answer.text}</span>
@@ -115,3 +114,4 @@ export default function TestPage() {
     </div>
   );
 }
+
