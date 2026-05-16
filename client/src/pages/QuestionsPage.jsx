@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { questionApi } from "../api";
-import NavBar from "../components/NavBar";
 
 function isProtected(question) {
   return question.answers.some((a) =>
@@ -29,47 +28,37 @@ export default function QuestionsPage() {
     load();
   }
 
-  if (loading) return (
-    <div className="page">
-      <NavBar />
-      <div className="center-screen"><div className="spinner" /></div>
-    </div>
-  );
+  if (loading) return <div className="center-screen"><div className="spinner" /></div>;
 
   return (
-    <div className="page">
-      <NavBar />
-      <div className="roles-wrap">
+    <div className="roles-wrap">
+      <div className="page-header">
+        <h1 className="page-title">Questions</h1>
+        <button className="btn-outline" onClick={() => navigate("/create-question")}>
+          + Create Question
+        </button>
+      </div>
+      <p className="page-sub">Click delete to remove your own questions</p>
 
-        <div className="page-header">
-          <h1 className="page-title">Questions</h1>
-          <button className="btn-outline" onClick={() => navigate("/create-question")}>
-            + Create Question
-          </button>
-        </div>
-        <p className="page-sub">Click delete to remove your own questions</p>
-
-        <div className="roles-grid">
-          {questions.map((q, idx) => (
-            <div key={q.id} className="role-card">
-              <div className="role-card-top">
-                <span className="role-icon">💡</span>
-                <span className="role-name">{q.text}</span>
-                <div className="role-card-actions">
-                  {!isProtected(q) && (
-                    <button
-                      className="btn-delete-role"
-                      onClick={() => handleDelete(q.id)}
-                    >
-                      Delete
-                    </button>
-                  )}
-                </div>
+      <div className="roles-grid">
+        {questions.map((q) => (
+          <div key={q.id} className="role-card">
+            <div className="role-card-top">
+              <span className="role-icon">💡</span>
+              <span className="role-name">{q.text}</span>
+              <div className="role-card-actions">
+                {!isProtected(q) && (
+                  <button
+                    className="btn-delete-role"
+                    onClick={() => handleDelete(q.id)}
+                  >
+                    Delete
+                  </button>
+                )}
               </div>
             </div>
-          ))}
-        </div>
-
+          </div>
+        ))}
       </div>
     </div>
   );
