@@ -89,8 +89,8 @@ const sorted = Object.entries(scores)
         )}
 
         <div className="result-actions">
-          <button className="btn-primary" onClick={() => navigate("/test")}>
-            Try Again
+          <button className="btn-primary" onClick={() => { navigate("/test"); window.location.reload(); }}>
+          Try Again
           </button>
           <button className="btn-outline" onClick={() => navigate("/roles")}>
             See All Roles

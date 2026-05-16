@@ -65,25 +65,11 @@ function list() {
 function getTestQuestions() {
   try {
     const allQuestions = list();
-    const groupedByRole = {};
-    allQuestions.forEach((q) => {
-      q.answers.forEach((a) => {
-        if (!groupedByRole[a.itRoleId]) groupedByRole[a.itRoleId] = [];
-        if (!groupedByRole[a.itRoleId].includes(q)) {
-          groupedByRole[a.itRoleId].push(q);
-        }
-      });
-    });
-    let testQuestions = [];
-    Object.values(groupedByRole).forEach((questions) => {
-      const shuffled = questions.sort(() => Math.random() - 0.5);
-      testQuestions = testQuestions.concat(shuffled.slice(0, 4));
-    });
-    return testQuestions.sort(() => Math.random() - 0.5).slice(0, 20);
+    const shuffled = allQuestions.sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, 20);
   } catch (error) {
     throw { code: "failedToGetTestQuestions", message: error.message };
   }
 }
 
 module.exports = { get, create, update, remove, list, getTestQuestions };
-

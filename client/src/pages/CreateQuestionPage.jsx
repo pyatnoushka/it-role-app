@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { questionApi, itRoleApi } from "../api";
+import { questionApi, itRoleApi, PROTECTED_ROLE_IDS } from "../api";
 import NavBar from "../components/NavBar";
 
 const emptyAnswer = () => ({ text: "", itRoleId: "" });
@@ -19,7 +19,10 @@ export default function CreateQuestionPage() {
 
   useEffect(() => {
     itRoleApi.list().then((data) => {
-      setRoles(data.itemList || []);
+      const filtered = (data.itemList || []).filter((r) =>
+        PROTECTED_ROLE_IDS.includes(r.id)
+      );
+      setRoles(filtered);
       setRolesLoading(false);
     });
   }, []);
